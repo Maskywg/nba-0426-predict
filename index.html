@@ -105,10 +105,15 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,76px);line-heigh
 .lb-pick.correct{color:#16a34a;font-weight:900;background:rgba(22,163,74,.12);border-radius:6px;padding:1px 4px}
 .lb-pick.wrong{color:#dc2626;font-weight:700;background:rgba(220,38,38,.1);border-radius:6px;padding:1px 4px;text-decoration:line-through;opacity:.7}
 .score-badge{display:inline-block;font-size:10px;font-weight:900;padding:2px 8px;border-radius:100px;margin-left:6px;vertical-align:middle}
+.score-badge.s4{background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;border:1px solid #FFD700;box-shadow:0 0 8px rgba(255,215,0,.4)}
 .score-badge.s3{background:rgba(22,163,74,.15);color:#16a34a;border:1px solid rgba(22,163,74,.3)}
 .score-badge.s2{background:rgba(29,66,138,.12);color:#1D428A;border:1px solid rgba(29,66,138,.25)}
 .score-badge.s1{background:rgba(180,140,0,.12);color:#b8860b;border:1px solid rgba(180,140,0,.25)}
 .score-badge.s0{background:rgba(200,16,46,.1);color:#C8102E;border:1px solid rgba(200,16,46,.2)}
+.crown-row{display:flex;align-items:center;gap:6px}
+.crown{font-size:18px;animation:crownPop .5s ease both}
+.hao{display:inline-block;font-size:11px;font-weight:900;color:#b8860b;background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,165,0,.1));border:1px solid rgba(255,215,0,.5);border-radius:100px;padding:2px 9px;letter-spacing:1px}
+@keyframes crownPop{0%{transform:scale(0) rotate(-20deg)}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
 .result-row{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
 .result-tag{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:.5px}
 .result-tag.win{background:rgba(22,163,74,.15);color:#16a34a;border:1px solid rgba(22,163,74,.3)}
@@ -382,14 +387,19 @@ function renderLB() {
       return `<div class="lb-pick ${ok?'correct':'wrong'}">${ok?'✓':'✗'} ${v}</div>`;
     }).join('');
     const sub = (e.votes||[]).join(' · ');
+    const allDone = decided === MATCH_COUNT;
+    const allCorrect = allDone && e.correct === MATCH_COUNT;
     const scoreClass = `s${e.correct}`;
     const scoreBadge = decided > 0 ? `<span class="score-badge ${scoreClass}">${e.correct}/${decided} 正確</span>` : '';
+    const crownHtml = allCorrect ? `<span class="crown">👑</span><span class="hao">厲害！</span>` : '';
     const delBtn = (!locked && isMe) ? `<button class="del-btn" onclick="deleteMe()">🗑 刪除</button>` : `<div></div>`;
     return `
-      <div class="lb-row ${isMe?'me':''}" style="animation-delay:${i*.04}s">
-        <div class="lb-rank ${CLS[i]||''}">${SYM[i]||(i+1)}</div>
-        <div class="lb-name">${esc(e.name)}${isMe?'<span class="me-tag">← 你</span>':''}${scoreBadge}
-          <div class="lb-sub">${sub}</div></div>
+      <div class="lb-row ${isMe?'me':''} ${allCorrect?'style="background:rgba(255,215,0,.08);border-left:3px solid #FFD700"':''}">
+        <div class="lb-rank ${allCorrect?'g':CLS[i]||''}">${allCorrect?'👑':SYM[i]||(i+1)}</div>
+        <div class="lb-name">
+          <div class="crown-row">${esc(e.name)}${isMe?'<span class="me-tag">← 你</span>':''}${crownHtml}${scoreBadge}</div>
+          <div class="lb-sub">${sub}</div>
+        </div>
         ${cells}${delBtn}
       </div>`;
   }).join('');
