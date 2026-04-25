@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏀 NBA 季後賽 4/26 預測</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--red:#C8102E;--blue:#1D428A;--gold:#d4890a;--dark:#0a0a0f;--card:#12121a;--border:#222230;--text:#f0f0ff;--muted:#888}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--dark);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(200,16,46,.12),transparent 70%),
+             radial-gradient(ellipse 80% 60% at 80% 100%,rgba(29,66,138,.15),transparent 60%),
+             repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(255,255,255,.02) 60px),
+             repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,.02) 60px)}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 80px;position:relative;z-index:1}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dn{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+
+header{text-align:center;padding:44px 0 28px;animation:dn .6s ease both}
+.badge{display:inline-block;background:linear-gradient(135deg,#1D428A,#2a5fc4);color:#fff;font-size:11px;font-weight:900;letter-spacing:3px;padding:6px 16px;border-radius:100px;margin-bottom:14px}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,76px);line-height:1;background:linear-gradient(135deg,#1D428A 0%,#C8102E 50%,#1D428A 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;margin-bottom:6px}
+.sub{color:var(--muted);font-size:13px;letter-spacing:1px}
+
+.banner{border-radius:14px;padding:14px 20px;margin-bottom:22px;display:flex;align-items:center;gap:12px;animation:slideUp .5s ease .1s both}
+.banner.open{background:rgba(29,66,138,.12);border:1px solid rgba(29,66,138,.35)}
+.banner.closed{background:rgba(200,16,46,.12);border:1px solid rgba(200,16,46,.45)}
+.banner-icon{font-size:26px}.banner-text{flex:1}
+.banner-title{font-weight:700;font-size:14px;margin-bottom:2px}
+.banner-sub{font-size:12px;color:var(--muted)}
+#countdown{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:#7aa3ff;white-space:nowrap}
+#countdown.exp{color:#ff6b7a}
+
+.name-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:24px;animation:slideUp .5s ease .15s both}
+.name-box label{display:block;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+.name-box input{width:100%;background:rgba(29,66,138,.08);border:1.5px solid var(--border);border-radius:11px;padding:13px 16px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:15px;outline:none;transition:border-color .2s}
+.name-box input:focus{border-color:var(--gold)}
+.name-box input::placeholder{color:#555}
+.name-box input:disabled{opacity:.4;cursor:not-allowed}
+
+.sec{display:flex;align-items:center;gap:12px;margin:32px 0 14px}
+.sec-label{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,currentColor,transparent);opacity:.3}
+.ctag{font-size:10px;font-weight:700;letter-spacing:2px;padding:4px 11px;border-radius:100px;text-transform:uppercase}
+.east{background:rgba(200,16,46,.2);color:#ff7080;border:1px solid rgba(200,16,46,.4)}
+.west{background:rgba(29,66,138,.3);color:#7aa3ff;border:1px solid rgba(29,66,138,.5)}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:14px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;animation:slideUp .5s ease both}
+.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 60%);pointer-events:none}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,0,0,.4)}
+.card-time{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.card-note{display:inline-block;font-size:11px;font-weight:700;color:#7aa3ff;background:rgba(29,66,138,.18);border:1px solid rgba(29,66,138,.3);border-radius:6px;padding:2px 8px;margin-left:8px;letter-spacing:1px}
+.series-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;margin-left:6px;letter-spacing:.5px}
+.series-badge.lead{background:rgba(200,16,46,.2);color:#ff8896;border:1px solid rgba(200,16,46,.3)}
+.series-badge.tied{background:rgba(29,66,138,.2);color:#7aa3ff;border:1px solid rgba(29,66,138,.3)}
+
+.teams{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.team{flex:1;display:flex;align-items:center;gap:8px}
+.team.r{flex-direction:row-reverse;text-align:right}
+.emoji{font-size:30px;line-height:1}
+.seed{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px}
+.tname{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;line-height:1.1}
+.vs{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--muted);padding:0 2px;flex-shrink:0}
+
+.vote-row{border-top:1px solid var(--border);padding-top:16px}
+.vote-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.btns{display:flex;gap:8px}
+.vbtn{flex:1;padding:13px 8px;border-radius:11px;border:1.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;cursor:pointer;transition:all .18s}
+.vbtn:hover:not(:disabled){background:rgba(255,255,255,.08);border-color:var(--gold);transform:scale(1.02)}
+.vbtn:disabled{opacity:.4;cursor:not-allowed}
+.vbtn.sel-l{background:linear-gradient(135deg,rgba(200,16,46,.28),rgba(200,16,46,.12));border-color:var(--red);color:#ff8896;box-shadow:0 0 18px rgba(200,16,46,.15)}
+.vbtn.sel-r{background:linear-gradient(135deg,rgba(29,66,138,.38),rgba(29,66,138,.18));border-color:#4a7aff;color:#7aa3ff;box-shadow:0 0 18px rgba(29,66,138,.2)}
+.vbtn .ck{display:none;margin-left:5px;font-size:13px}
+.vbtn.sel-l .ck,.vbtn.sel-r .ck{display:inline}
+
+.lock-overlay{position:absolute;inset:0;background:rgba(0,0,0,.65);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#ff6b7a;letter-spacing:2px;backdrop-filter:blur(3px);z-index:5}
+
+.submit-wrap{margin-top:36px;text-align:center;animation:slideUp .5s ease .7s both}
+.sub-btn{background:linear-gradient(135deg,var(--red),#ff4b6e);color:#fff;border:none;padding:18px 56px;border-radius:100px;font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:3px;cursor:pointer;transition:all .25s;box-shadow:0 8px 28px rgba(200,16,46,.35)}
+.sub-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 12px 36px rgba(200,16,46,.5)}
+.sub-btn:active:not(:disabled){transform:scale(.97)}
+.sub-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+
+#lb-section{margin-top:48px;animation:slideUp .5s ease both}
+.lb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.lb-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:#7aa3ff}
+.lb-cnt{font-size:12px;color:var(--muted);background:rgba(29,66,138,.1);padding:5px 13px;border-radius:100px;border:1px solid var(--border)}
+.lb-table{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.lb-head{display:grid;grid-template-columns:46px 1fr repeat(4,1fr) 60px;padding:11px 18px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.lb-row{display:grid;grid-template-columns:46px 1fr repeat(4,1fr) 60px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.04);align-items:center;transition:background .2s;animation:slideUp .3s ease both}
+.lb-row:last-child{border-bottom:none}
+.lb-row:hover{background:rgba(255,255,255,.03)}
+.lb-row.me{background:rgba(29,66,138,.12)}
+.lb-rank{font-family:'Bebas Neue',sans-serif;font-size:19px;text-align:center;color:var(--muted)}
+.lb-rank.g{color:#FFD700}.lb-rank.s{color:#C0C0C0}.lb-rank.b{color:#CD7F32}
+.lb-name{font-weight:700;font-size:14px}
+.me-tag{font-size:10px;color:#C8102E;margin-left:6px}
+.lb-pick{font-size:11px;color:var(--muted)}
+.lb-pick.on{color:var(--text);font-weight:700}
+.lb-empty{padding:36px;text-align:center;color:var(--muted);font-size:14px}
+.lb-sub{display:none;font-size:11px;color:var(--muted);margin-top:2px;font-weight:400}
+.del-btn{background:none;border:1px solid rgba(200,16,46,.35);color:#ff6b7a;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
+.del-btn:hover{background:rgba(200,16,46,.2);border-color:var(--red)}
+
+@media(max-width:580px){
+  .lb-head{grid-template-columns:38px 1fr 50px}
+  .lb-head .hpick{display:none}
+  .lb-row{grid-template-columns:38px 1fr 50px}
+  .lb-pick{display:none}
+  .lb-sub{display:block}
+}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gold);color:#000;font-weight:700;padding:13px 26px;border-radius:100px;font-size:14px;transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:100;white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="badge">🏀 NBA PLAYOFFS 2026 · 4/26</div>
+  <h1>季後賽預測</h1>
+  <p class="sub">4月26日 四場季後賽 · 截止：上午 1:00</p>
+</header>
+
+<div class="banner open" id="banner">
+  <div class="banner-icon">⏰</div>
+  <div class="banner-text">
+    <div class="banner-title" id="btitle">下注截止：4月26日 上午 01:00</div>
+    <div class="banner-sub" id="bsub">截止前可隨時修改，提交後即時顯示在排行榜</div>
+  </div>
+  <div id="countdown">--:--:--</div>
+</div>
+
+<div class="name-box">
+  <label>📝 請輸入你的名字</label>
+  <input type="text" id="pname" placeholder="你的暱稱..." maxlength="20">
+</div>
+
+<div id="matches-container"></div>
+
+<div class="submit-wrap">
+  <button class="sub-btn" id="subbtn" onclick="submitPrediction()">🏀 提交預測</button>
+</div>
+
+<div id="lb-section">
+  <div class="lb-top">
+    <div class="lb-title">🏆 同學預測榜</div>
+    <div class="lb-cnt" id="lb-cnt">載入中...</div>
+  </div>
+  <div class="lb-table">
+    <div class="lb-head">
+      <div></div><div>名字</div>
+      <div class="hpick">魔術/活塞</div>
+      <div class="hpick">太陽/雷霆</div>
+      <div class="hpick">老鷹/尼克</div>
+      <div class="hpick">灰狼/金塊</div>
+      <div></div>
+    </div>
+    <div id="lb-body"><div class="lb-empty">🏀 連線中...</div></div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Firebase Config ───────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDSQxPkn2D-Gou5rCRzGG5z2v881EphAj8",
+  authDomain: "gen-lang-client-0737444461.firebaseapp.com",
+  projectId: "gen-lang-client-0737444461",
+  storageBucket: "gen-lang-client-0737444461.firebasestorage.app",
+  messagingSenderId: "266006971614",
+  appId: "1:266006971614:web:0c91d8ba3c5f78671f6e4f"
+};
+
+const app = initializeApp(firebaseConfig);
+const fsdb = getFirestore(app);
+const colRef = collection(fsdb, 'nba_0426_predict');
+
+// ── CONFIG ────────────────────────────────────────────
+const deadlineDate = new Date('2026-04-26T01:00:00+08:00');
+
+const SECTIONS = [
+  {
+    label: '東區首輪', tag: 'EAST', tagClass: 'east',
+    matches: [
+      { id: 0, time: '4月26日 (週日) · 上午 1:00', note: 'GAME 3',
+        seriesText: 'Series tied 1-1', seriesClass: 'tied',
+        teamA: { emoji: '🪄', seed: '#5', name: '魔術' },
+        teamB: { emoji: '⚙️', seed: '#4', name: '活塞' } },
+      { id: 2, time: '4月26日 (週日) · 上午 6:00', note: 'GAME 4',
+        seriesText: 'ATL leads 2-1', seriesClass: 'lead',
+        teamA: { emoji: '🦅', seed: '#6', name: '老鷹' },
+        teamB: { emoji: '🗽', seed: '#3', name: '尼克' } },
+    ]
+  },
+  {
+    label: '西區首輪', tag: 'WEST', tagClass: 'west',
+    matches: [
+      { id: 1, time: '4月26日 (週日) · 上午 3:30', note: 'GAME 3',
+        seriesText: 'OKC leads 2-0', seriesClass: 'lead',
+        teamA: { emoji: '☀️', seed: '#7', name: '太陽' },
+        teamB: { emoji: '⚡', seed: '#2', name: '雷霆' } },
+      { id: 3, time: '4月26日 (週日) · 上午 8:30', note: 'GAME 4',
+        seriesText: 'MIN leads 2-1', seriesClass: 'lead',
+        teamA: { emoji: '🐺', seed: '#5', name: '灰狼' },
+        teamB: { emoji: '⛰️', seed: '#4', name: '金塊' } },
+    ]
+  }
+];
+
+const MATCH_COUNT = SECTIONS.flatMap(s => s.matches).length;
+let votes = new Array(MATCH_COUNT).fill(null), locked = false, myName = '';
+
+// ── 渲染比賽卡片 ──────────────────────────────────────
+function renderMatches() {
+  const container = document.getElementById('matches-container');
+  let delay = 0.1;
+  SECTIONS.forEach(sec => {
+    container.innerHTML += `
+      <div class="sec">
+        <span class="sec-label" style="color:${sec.tagClass==='east'?'#ff8896':'#7aa3ff'}">${sec.label}</span>
+        <span class="ctag ${sec.tagClass}">${sec.tag}</span>
+        <div class="sec-line" style="color:${sec.tagClass==='east'?'#C8102E':'#1D428A'}"></div>
+      </div>`;
+    sec.matches.forEach(m => {
+      delay += 0.08;
+      container.innerHTML += `
+        <div class="card" data-i="${m.id}" style="animation-delay:${delay}s">
+          <div class="card-time">${m.time}<span class="card-note">${m.note}</span>
+            <span class="series-badge ${m.seriesClass}">${m.seriesText}</span>
+          </div>
+          <div class="teams">
+            <div class="team l">
+              <div class="emoji">${m.teamA.emoji}</div>
+              <div>
+                <div class="seed">${m.teamA.seed} 種子</div>
+                <div class="tname">${m.teamA.name}</div>
+              </div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="team r">
+              <div class="emoji">${m.teamB.emoji}</div>
+              <div>
+                <div class="seed">${m.teamB.seed} 種子</div>
+                <div class="tname">${m.teamB.name}</div>
+              </div>
+            </div>
+          </div>
+          <div class="vote-row">
+            <div class="vote-lbl">🏆 你看好誰贏這場？</div>
+            <div class="btns">
+              <button class="vbtn" onclick="pick(${m.id},'${m.teamA.name}','l',this)">${m.teamA.emoji} ${m.teamA.name}<span class="ck">✓</span></button>
+              <button class="vbtn" onclick="pick(${m.id},'${m.teamB.name}','r',this)">${m.teamB.emoji} ${m.teamB.name}<span class="ck">✓</span></button>
+            </div>
+          </div>
+        </div>`;
+    });
+  });
+}
+
+// ── 截止倒數 ──────────────────────────────────────────
+function pad(n){ return String(n).padStart(2,'0'); }
+function tick(){
+  const diff = deadlineDate - Date.now();
+  if(diff <= 0){ lockAll(); return; }
+  const h=Math.floor(diff/3600000), m=Math.floor(diff%3600000/60000), s=Math.floor(diff%60000/1000);
+  document.getElementById('countdown').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+setInterval(tick, 1000); tick();
+
+function lockAll(){
+  if(locked) return; locked = true;
+  document.getElementById('countdown').textContent = '已截止';
+  document.getElementById('countdown').classList.add('exp');
+  document.getElementById('banner').className = 'banner closed';
+  document.getElementById('btitle').textContent = '⛔ 預測已截止';
+  document.getElementById('bsub').textContent = '下注時間結束，以下為最終預測結果';
+  document.getElementById('pname').disabled = true;
+  document.getElementById('subbtn').disabled = true;
+  document.querySelectorAll('.vbtn').forEach(b => b.disabled = true);
+  document.querySelectorAll('.card').forEach(c => {
+    const o = document.createElement('div');
+    o.className = 'lock-overlay'; o.textContent = '🔒 已截止'; c.appendChild(o);
+  });
+}
+
+// ── 投票 ──────────────────────────────────────────────
+window.pick = function(idx, team, side, btn){
+  if(locked) return;
+  document.querySelector(`.card[data-i="${idx}"]`).querySelectorAll('.vbtn').forEach(b => b.classList.remove('sel-l','sel-r'));
+  votes[idx] = team;
+  btn.classList.add(side === 'l' ? 'sel-l' : 'sel-r');
+  btn.style.transform = 'scale(.95)';
+  setTimeout(() => btn.style.transform = '', 140);
+};
+
+// ── 提交 ──────────────────────────────────────────────
+window.submitPrediction = async function(){
+  if(locked){ toast('⛔ 已截止，無法再修改！'); return; }
+  myName = document.getElementById('pname').value.trim();
+  if(!myName){ toast('⚠️ 請輸入你的名字！'); return; }
+  const miss = votes.filter(v => !v).length;
+  if(miss){ toast(`⚠️ 還有 ${miss} 場未選！`); return; }
+  const key = myName.toLowerCase().replace(/\s+/g,'_');
+  await setDoc(doc(colRef, key), { name: myName, votes: [...votes], time: Date.now() });
+  toast('✅ 預測已送出！');
+  setTimeout(() => document.getElementById('lb-section').scrollIntoView({behavior:'smooth', block:'start'}), 400);
+};
+
+// ── 刪除 ──────────────────────────────────────────────
+window.deleteMe = async function(){
+  if(locked) return;
+  if(!myName) return;
+  if(!confirm(`確定要刪除「${myName}」的預測嗎？`)) return;
+  const key = myName.toLowerCase().replace(/\s+/g,'_');
+  await deleteDoc(doc(colRef, key));
+  votes = new Array(MATCH_COUNT).fill(null);
+  document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('sel-l','sel-r'));
+  toast('🗑 預測已刪除');
+};
+
+// ── 即時監聽 Firestore ────────────────────────────────
+const SYM = ['🥇','🥈','🥉'], CLS = ['g','s','b'];
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+const q = query(colRef, orderBy('time'));
+onSnapshot(q, (snapshot) => {
+  const db = snapshot.docs.map(d => d.data());
+  document.getElementById('lb-cnt').textContent = `${db.length} 人參與`;
+  if(!db.length){
+    document.getElementById('lb-body').innerHTML = '<div class="lb-empty">🏀 還沒有人投票，快來第一個！</div>';
+    return;
+  }
+  document.getElementById('lb-body').innerHTML = db.map((e,i) => {
+    const isMe = e.name.toLowerCase() === myName.toLowerCase();
+    const cells = (e.votes||[]).map(v => `<div class="lb-pick ${v?'on':''}">${v||'—'}</div>`).join('');
+    const sub = (e.votes||[]).join(' · ');
+    const delBtn = (!locked && isMe) ? `<button class="del-btn" onclick="deleteMe()">🗑 刪除</button>` : `<div></div>`;
+    return `
+      <div class="lb-row ${isMe?'me':''}" style="animation-delay:${i*.04}s">
+        <div class="lb-rank ${CLS[i]||''}">${SYM[i]||(i+1)}</div>
+        <div class="lb-name">${esc(e.name)}${isMe?'<span class="me-tag">← 你</span>':''}
+          <div class="lb-sub">${sub}</div></div>
+        ${cells}${delBtn}
+      </div>`;
+  }).join('');
+});
+
+// ── Toast ─────────────────────────────────────────────
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── 啟動 ──────────────────────────────────────────────
+renderMatches();
+</script>
+</body>
+</html>
