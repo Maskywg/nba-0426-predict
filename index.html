@@ -102,6 +102,17 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,76px);line-heigh
 .lb-sub{display:none;font-size:11px;color:var(--muted);margin-top:2px;font-weight:400}
 .del-btn{background:none;border:1px solid rgba(200,16,46,.35);color:#ff6b7a;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
 .del-btn:hover{background:rgba(200,16,46,.2);border-color:var(--red)}
+.lb-pick.correct{color:#16a34a;font-weight:900;background:rgba(22,163,74,.12);border-radius:6px;padding:1px 4px}
+.lb-pick.wrong{color:#dc2626;font-weight:700;background:rgba(220,38,38,.1);border-radius:6px;padding:1px 4px;text-decoration:line-through;opacity:.7}
+.score-badge{display:inline-block;font-size:10px;font-weight:900;padding:2px 8px;border-radius:100px;margin-left:6px;vertical-align:middle}
+.score-badge.s3{background:rgba(22,163,74,.15);color:#16a34a;border:1px solid rgba(22,163,74,.3)}
+.score-badge.s2{background:rgba(29,66,138,.12);color:#1D428A;border:1px solid rgba(29,66,138,.25)}
+.score-badge.s1{background:rgba(180,140,0,.12);color:#b8860b;border:1px solid rgba(180,140,0,.25)}
+.score-badge.s0{background:rgba(200,16,46,.1);color:#C8102E;border:1px solid rgba(200,16,46,.2)}
+.result-row{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.result-tag{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:.5px}
+.result-tag.win{background:rgba(22,163,74,.15);color:#16a34a;border:1px solid rgba(22,163,74,.3)}
+.result-tag.pending{background:rgba(29,66,138,.08);color:#5577aa;border:1px solid rgba(29,66,138,.2)}
 
 @media(max-width:580px){
   .lb-head{grid-template-columns:38px 1fr 50px}
@@ -149,6 +160,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,76px);line-heigh
     <div class="lb-title">🏆 同學預測榜</div>
     <div class="lb-cnt" id="lb-cnt">載入中...</div>
   </div>
+  <div class="result-row" id="result-row" style="margin-bottom:14px;"></div>
   <div class="lb-table">
     <div class="lb-head">
       <div></div><div>名字</div>
@@ -167,7 +179,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,76px);line-heigh
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── Firebase Config ───────────────────────────────────
 const firebaseConfig = {
@@ -182,6 +194,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const fsdb = getFirestore(app);
 const colRef = collection(fsdb, 'nba_0426_predict');
+const resultsRef = doc(fsdb, 'game_results', 'nba_0426');
+
+// 賽果：null=未出爐，字串=勝隊名稱
+let results = [null, null, null, null];
 
 // ── CONFIG ────────────────────────────────────────────
 const deadlineDate = new Date('2026-04-26T01:00:00+08:00');
@@ -330,27 +346,69 @@ window.deleteMe = async function(){
 const SYM = ['🥇','🥈','🥉'], CLS = ['g','s','b'];
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-const q = query(colRef, orderBy('time'));
-onSnapshot(q, (snapshot) => {
-  const db = snapshot.docs.map(d => d.data());
+let latestDB = [];
+
+function renderLB() {
+  const db = latestDB;
+  const decided = results.filter(r => r !== null).length;
   document.getElementById('lb-cnt').textContent = `${db.length} 人參與`;
+
+  // 賽果列
+  const MATCH_NAMES = ['魔術/活塞','太陽/雷霆','老鷹/尼克','灰狼/金塊'];
+  const resultTags = results.map((r,i) =>
+    r ? `<span class="result-tag win">✓ ${r} 勝</span>`
+      : `<span class="result-tag pending">⏳ ${MATCH_NAMES[i]}</span>`
+  ).join('');
+  document.getElementById('result-row').innerHTML = resultTags;
+
   if(!db.length){
     document.getElementById('lb-body').innerHTML = '<div class="lb-empty">🏀 還沒有人投票，快來第一個！</div>';
     return;
   }
-  document.getElementById('lb-body').innerHTML = db.map((e,i) => {
+
+  // 計算積分並排序
+  const scored = db.map(e => {
+    let correct = 0;
+    (e.votes||[]).forEach((v,i) => { if(results[i] && v === results[i]) correct++; });
+    return { ...e, correct };
+  }).sort((a,b) => b.correct - a.correct || a.time - b.time);
+
+  document.getElementById('lb-body').innerHTML = scored.map((e,i) => {
     const isMe = e.name.toLowerCase() === myName.toLowerCase();
-    const cells = (e.votes||[]).map(v => `<div class="lb-pick ${v?'on':''}">${v||'—'}</div>`).join('');
+    const cells = (e.votes||[]).map((v,idx) => {
+      if(!v) return `<div class="lb-pick">—</div>`;
+      if(results[idx] === null) return `<div class="lb-pick on">${v}</div>`;
+      const ok = v === results[idx];
+      return `<div class="lb-pick ${ok?'correct':'wrong'}">${ok?'✓':'✗'} ${v}</div>`;
+    }).join('');
     const sub = (e.votes||[]).join(' · ');
+    const scoreClass = `s${e.correct}`;
+    const scoreBadge = decided > 0 ? `<span class="score-badge ${scoreClass}">${e.correct}/${decided} 正確</span>` : '';
     const delBtn = (!locked && isMe) ? `<button class="del-btn" onclick="deleteMe()">🗑 刪除</button>` : `<div></div>`;
     return `
       <div class="lb-row ${isMe?'me':''}" style="animation-delay:${i*.04}s">
         <div class="lb-rank ${CLS[i]||''}">${SYM[i]||(i+1)}</div>
-        <div class="lb-name">${esc(e.name)}${isMe?'<span class="me-tag">← 你</span>':''}
+        <div class="lb-name">${esc(e.name)}${isMe?'<span class="me-tag">← 你</span>':''}${scoreBadge}
           <div class="lb-sub">${sub}</div></div>
         ${cells}${delBtn}
       </div>`;
   }).join('');
+}
+
+// 監聽預測資料
+const q = query(colRef, orderBy('time'));
+onSnapshot(q, (snapshot) => {
+  latestDB = snapshot.docs.map(d => d.data());
+  renderLB();
+});
+
+// 監聽賽果（即時更新）
+onSnapshot(resultsRef, (snap) => {
+  if(snap.exists()) {
+    const d = snap.data();
+    results = [d.r0||null, d.r1||null, d.r2||null, d.r3||null];
+  }
+  renderLB();
 });
 
 // ── Toast ─────────────────────────────────────────────
