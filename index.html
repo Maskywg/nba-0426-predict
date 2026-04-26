@@ -119,6 +119,18 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,76px);line-heigh
 .crown{font-size:18px;animation:crownPop .5s ease both}
 .hao{display:inline-block;font-size:11px;font-weight:900;color:#b8860b;background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,165,0,.1));border:1px solid rgba(255,215,0,.5);border-radius:100px;padding:2px 9px;letter-spacing:1px}
 @keyframes crownPop{0%{transform:scale(0) rotate(-20deg)}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+
+/* ── 賽事結束冠軍公告 ── */
+.winner-banner{display:none;background:linear-gradient(135deg,#fffbe6,#fff8d0);border:2px solid #FFD700;border-radius:20px;padding:22px 24px;margin-bottom:20px;animation:slideUp .6s ease both;box-shadow:0 6px 28px rgba(255,200,0,.2)}
+.winner-banner.show{display:block}
+.winner-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.winner-trophy{font-size:28px}
+.winner-headline{font-size:14px;font-weight:900;color:#8a6000;letter-spacing:1px}
+.winner-sub{font-size:12px;color:#a07820;margin-top:2px}
+.winner-names{display:flex;flex-wrap:wrap;gap:8px}
+.winner-chip{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#FFD700,#FFA500);color:#3a2000;font-weight:900;font-size:13px;padding:6px 14px;border-radius:100px;box-shadow:0 3px 10px rgba(255,180,0,.3)}
+.winner-runner{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.runner-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(255,200,0,.12);color:#8a6000;font-size:12px;font-weight:700;padding:4px 11px;border-radius:100px;border:1px solid rgba(255,200,0,.4)}
 .result-row{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
 .result-tag{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;letter-spacing:.5px}
 .result-tag.win{background:rgba(22,163,74,.15);color:#16a34a;border:1px solid rgba(22,163,74,.3)}
@@ -138,6 +150,19 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,76px);line-heigh
 </head>
 <body>
 <div class="wrap">
+
+<!-- 賽事結束冠軍公告（全部賽果出爐後自動顯示） -->
+<div class="winner-banner" id="winner-banner">
+  <div class="winner-top">
+    <div class="winner-trophy">🏆</div>
+    <div>
+      <div class="winner-headline" id="winner-headline">預測冠軍</div>
+      <div class="winner-sub" id="winner-sub">恭喜以下同學全部猜對！</div>
+    </div>
+  </div>
+  <div class="winner-names" id="winner-names"></div>
+  <div class="winner-runner" id="winner-runner"></div>
+</div>
 
 <header>
   <div class="badge">🏀 NBA PLAYOFFS 2026 · 4/26</div>
@@ -389,6 +414,37 @@ function renderLB() {
     (e.votes||[]).forEach((v,i) => { if(results[i] && v === results[i]) correct++; });
     return { ...e, correct };
   }).sort((a,b) => b.correct - a.correct || a.time - b.time);
+
+  // ── 冠軍公告（全部賽果出爐才顯示）──
+  const allDoneGlobal = decided === MATCH_COUNT;
+  const banner = document.getElementById('winner-banner');
+  if(allDoneGlobal && scored.length) {
+    const topScore = scored[0].correct;
+    const champions = scored.filter(e => e.correct === MATCH_COUNT); // 全對者
+    const toppers   = scored.filter(e => e.correct === topScore && e.correct < MATCH_COUNT); // 最高分但非全對
+
+    if(champions.length) {
+      document.getElementById('winner-headline').textContent = `🎉 恭喜！全場猜對冠軍`;
+      document.getElementById('winner-sub').textContent = `4/26 四場全猜對，實力驚人！`;
+      document.getElementById('winner-names').innerHTML = champions.map(e =>
+        `<span class="winner-chip">👑 ${e.name}</span>`).join('');
+      // 亞軍（非全對的最高分）
+      const runners = scored.filter(e => e.correct === topScore - 0 && !champions.includes(e));
+      document.getElementById('winner-runner').innerHTML = runners.length
+        ? `<span style="font-size:11px;color:#a07820;font-weight:700;width:100%;margin-bottom:2px">其他高分：</span>`
+          + runners.map(e => `<span class="runner-chip">🥈 ${e.name}（${e.correct}/${MATCH_COUNT}）</span>`).join('')
+        : '';
+    } else if(toppers.length) {
+      document.getElementById('winner-headline').textContent = `🏆 本日預測最強！`;
+      document.getElementById('winner-sub').textContent = `以 ${topScore}/${MATCH_COUNT} 猜對領先全場`;
+      document.getElementById('winner-names').innerHTML = toppers.map(e =>
+        `<span class="winner-chip">🥇 ${e.name}</span>`).join('');
+      document.getElementById('winner-runner').innerHTML = '';
+    }
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
 
   document.getElementById('lb-body').innerHTML = scored.map((e,i) => {
     const isMe = e.name.toLowerCase() === myName.toLowerCase();
