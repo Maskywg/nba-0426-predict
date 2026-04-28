@@ -61,7 +61,14 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,76px);line-heigh
 .emoji{font-size:30px;line-height:1}
 .seed{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px}
 .tname{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;line-height:1.1}
-.vs{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--muted);padding:0 2px;flex-shrink:0}
+.vs{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--muted);padding:0 2px;flex-shrink:0;text-align:center}
+.final-score{display:flex;flex-direction:column;align-items:center;gap:1px}
+.final-score .sc-row{display:flex;align-items:center;gap:4px}
+.final-score .sc{font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1}
+.final-score .sc.win{color:#16a34a;font-weight:900}
+.final-score .sc.lose{color:var(--muted)}
+.final-score .dash{font-size:14px;color:var(--muted)}
+.final-score .fin-lbl{font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
 
 .vote-row{border-top:1px solid var(--border);padding-top:16px}
 .vote-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
@@ -253,6 +260,8 @@ const resultsRef = doc(fsdb, 'game_results', 'nba_0426');
 
 // 賽果：null=未出爐，字串=勝隊名稱
 let results = [null, null, null, null];
+let scoreA  = [null, null, null, null];
+let scoreB  = [null, null, null, null];
 
 // ── CONFIG ────────────────────────────────────────────
 const deadlineDate = new Date('2026-04-26T01:00:00+08:00');
@@ -315,7 +324,7 @@ function renderMatches() {
                 <div class="tname">${m.teamA.name}</div>
               </div>
             </div>
-            <div class="vs">VS</div>
+            <div class="vs" id="vs-${m.id}">VS</div>
             <div class="team r">
               <div class="emoji">${m.teamB.emoji}</div>
               <div>
@@ -499,9 +508,32 @@ onSnapshot(resultsRef, (snap) => {
   if(snap.exists()) {
     const d = snap.data();
     results = [d.r0||null, d.r1||null, d.r2||null, d.r3||null];
+    scoreA  = [d.a0||null, d.a1||null, d.a2||null, d.a3||null];
+    scoreB  = [d.b0||null, d.b1||null, d.b2||null, d.b3||null];
+    updateCardScores();
   }
   renderLB();
 });
+
+function updateCardScores() {
+  const allMatches = SECTIONS.flatMap(s => s.matches);
+  allMatches.forEach(m => {
+    const vsEl = document.getElementById(`vs-${m.id}`);
+    if (!vsEl) return;
+    const sa = scoreA[m.id], sb = scoreB[m.id], winner = results[m.id];
+    if (sa && sb) {
+      const aWon = winner === m.teamA.name;
+      vsEl.innerHTML = `<div class="final-score">
+        <div class="sc-row">
+          <span class="sc ${aWon?'win':'lose'}">${sa}</span>
+          <span class="dash">-</span>
+          <span class="sc ${aWon?'lose':'win'}">${sb}</span>
+        </div>
+        <div class="fin-lbl">最終比分</div>
+      </div>`;
+    }
+  });
+}
 
 // ── Toast ─────────────────────────────────────────────
 function toast(msg){
